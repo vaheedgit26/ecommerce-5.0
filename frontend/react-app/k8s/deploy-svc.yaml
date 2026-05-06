@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  #namespace: ecommerce
+  # these labels are replicaset labels
+  labels:
+    project: ecommerce
+    tier: frontend
+    component: frontend
+spec:
+  replicas: 1
+  selector:
+    # using these labels replica set selects the pod
+    matchLabels:
+      project: ecommerce
+      tier: frontend
+      component: frontend
+  # This is pod definition, pod is subset of replicaset
+  template:
+    metadata:
+      labels:
+        project: ecommerce
+        tier: frontend
+        component: frontend
+    spec:
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: frontend
+      containers:
+      - name: frontend
+        image: vaheeddockerhub/ecomm-frontend:latest
+        imagePullPolicy: Always # safe to pull everytime, there may be images with same version rebuilt and pushed
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "100m"
+            memory: "128Mi"
+        readinessProbe:
+          # httpGet:
+          #   path: /health
+          #   port: 8080
+          tcpSocket:
+            port: 8080
+          failureThreshold: 2
+          periodSeconds: 10
+          initialDelaySeconds: 15
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          failureThreshold: 2
+          periodSeconds: 10
+        volumeMounts:
+        - name: nginx-config
+          # by default it mounts and thinks as directory
+          mountPath: "/etc/nginx/conf.d/ecommerce.conf"
+          subPath: ecommerce.conf
+          readOnly: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+  #namespace: ecommerce
+  labels:
+    project: ecommerce
+    tier: frontend
+    component: frontend
+spec:
+  type: NodePort
+  selector:
+    # labels are used as selectors
+    project: ecommerce
+    tier: frontend
+    component: frontend
+  ports:
+  - protocol: TCP
+    port: 8080 # servie port
+    targetPort: 8080 # container port
