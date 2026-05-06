@@ -43,6 +43,9 @@ RUN mkdir -p \
     /etc/nginx \
     /run \
   && chmod 755 /etc/nginx
+  
+# COPY BUILD output
+COPY --from=build /app/build /usr/share/nginx/html
 
 # Copy custom NGINX config
 COPY ecommerce.conf /etc/nginx/conf.d/ecommerce.conf
