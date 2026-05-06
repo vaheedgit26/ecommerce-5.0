@@ -48,10 +48,10 @@ RUN mkdir -p \
 COPY --from=build /app/build /usr/share/nginx/html
 
 # Copy custom NGINX config
-#COPY ecommerce.conf /etc/nginx/conf.d/ecommerce.conf
+# COPY ecommerce.conf /etc/nginx/conf.d/ecommerce.conf
 
 # Ensure config file permissions
-RUN chmod 644 /etc/nginx/conf.d/*.conf
+# RUN chmod 644 /etc/nginx/conf.d/*.conf
 
 EXPOSE 8080
 
