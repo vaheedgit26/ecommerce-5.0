@@ -33,7 +33,8 @@ data:
 
         location /api/products {
 
-            proxy_pass         http://product-service:8001/products;   # product service name
+            proxy_pass         http://product-service:8001/;   # product service name
+            #proxy_pass         http://product-service:8001/products;   # product service name
         
             proxy_redirect     off;
             proxy_set_header   Host $host;
